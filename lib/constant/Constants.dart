@@ -20,7 +20,10 @@ List<String> night = [
 
 List<String> images = [''];
 
-List<String> lotties = [''];
+List<String> lotties = [
+  'assets/lottie/dog_walk.json',
+  'assets/lottie/listen.json'
+];
 
 String getTimeOfDay() {
   DateTime now = DateTime.now();
@@ -32,6 +35,11 @@ String getTimeOfDay() {
   } else {
     return '晚上';
   }
+}
+
+String getRandomLottie() {
+  final random = Random();
+  return lotties[random.nextInt(lotties.length)];
 }
 
 String getRandomSentence(List<String> sentences) {

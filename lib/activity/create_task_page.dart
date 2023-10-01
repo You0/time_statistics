@@ -149,8 +149,7 @@ class _CreateTaskPageState extends State<CreateTaskPage>
             'end_time': now.millisecondsSinceEpoch,
             'desc': _targetValue
           });
-
-          _showLottieDialog(context);
+          Navigator.of(context).pop();
         },
         child: const Text(
           '创建事项',

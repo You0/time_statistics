@@ -1,3 +1,4 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shaniu/components/list.dart';
@@ -7,7 +8,9 @@ import 'activity/create_task_page.dart';
 import 'constant/Constants.dart';
 import 'data/list_item.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AndroidAlarmManager.initialize();
   runApp(const MyApp());
 }
 
@@ -140,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Container _buildTopTex() {
     return Container(
-        padding: const EdgeInsets.only(left: 20),
+        padding: const EdgeInsets.only(left: 20, right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

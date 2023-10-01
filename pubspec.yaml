@@ -46,6 +46,7 @@ dependencies:
   fl_chart: ^0.63.0
   workmanager: ^0.5.1
   flutter_local_notifications: ^15.1.1
+  android_alarm_manager_plus: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,9 @@ flutter:
     - assets/images/2.jpg
     - assets/lottie/dog_walk.json
     - assets/lottie/success.json
+    - assets/lottie/listen.json
+    - assets/lottie/empty.json
+    - assets/lottie/arrow.json
     - assets/lottie/congratulations.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

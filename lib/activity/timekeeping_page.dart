@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:isolate';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -8,6 +10,7 @@ import 'package:shaniu/utils/data_base_helper.dart';
 import 'package:workmanager/workmanager.dart';
 
 import '../components/time_scroll_compoent.dart';
+import '../constant/Constants.dart';
 
 class TimeKeepingPage extends StatefulWidget {
   const TimeKeepingPage({Key? key, required this.type}) : super(key: key);
@@ -28,6 +31,9 @@ class _TimeKeepingPageState extends State<TimeKeepingPage>
   String _totalHour = "0";
   String _weekHour = "0";
   String _dayHour = "0";
+  int _lastTimeCount = 0;
+  String _lottiePath = '';
+  String _background = '';
 
   void callbackDispatcher() {
     Workmanager().executeTask((task, inputData) {
@@ -82,11 +88,28 @@ class _TimeKeepingPageState extends State<TimeKeepingPage>
     super.dispose();
   }
 
-  void startWorkmanager() async {
-    await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-    await Workmanager().registerPeriodicTask("1", "timer",
-        frequency: const Duration(seconds: 1) // 每1s执行一次
-        );
+  // void startWorkmanager() async {
+  //   await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  //   await Workmanager().registerPeriodicTask("1", "timer",
+  //       frequency: const Duration(seconds: 1) // 每1s执行一次
+  //       );
+  // }
+
+  static void printHello() {
+    final DateTime now = DateTime.now();
+    final int isolateId = Isolate.current.hashCode;
+    print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
+  }
+
+  void alarmTask() {
+    _timeCount++;
+    print('ddd');
+  }
+
+  void alarmManager() async {
+    const int helloAlarmID = 0;
+    await AndroidAlarmManager.periodic(
+        const Duration(seconds: 1), helloAlarmID, printHello);
   }
 
   @override
@@ -96,7 +119,9 @@ class _TimeKeepingPageState extends State<TimeKeepingPage>
     _isStart = true;
     _startTimer();
     fetchMainDate();
-    startWorkmanager();
+    // startWorkmanager();
+    alarmManager();
+    _lottiePath = getRandomLottie();
   }
 
   void fetchMainDate() async {
@@ -147,19 +172,21 @@ class _TimeKeepingPageState extends State<TimeKeepingPage>
     }
   }
 
-  void _updateTimeCount() {
+  void _updateTimeCount(int tick) {
+    int currentTimeCount = _lastTimeCount + tick;
     setState(() {
-      _timeCount++;
+      _timeCount = currentTimeCount;
     });
   }
 
   void _startTimer() async {
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
-      _updateTimeCount();
+      _updateTimeCount(t.tick);
     });
   }
 
   void _stopTimer() {
+    _lastTimeCount = _timeCount;
     timer.cancel();
   }
 
@@ -191,7 +218,7 @@ class _TimeKeepingPageState extends State<TimeKeepingPage>
               Align(
                   alignment: const Alignment(0, -0.7),
                   child: Lottie.asset(
-                    'assets/lottie/dog_walk.json',
+                    _lottiePath,
                     width: 200,
                     height: 200,
                     fit: BoxFit.fill,
@@ -356,48 +383,51 @@ class _TimeKeepingPageState extends State<TimeKeepingPage>
     return '$num';
   }
 
+  Dialog buildDialog(String timeCount) {
+    return Dialog(
+      child: SizedBox(
+          width: 300,
+          height: 250,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                  child: Lottie.asset('assets/lottie/congratulations.json')),
+              Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('让咱看看本次积累了多少时间'),
+                    Text(timeCount,
+                        style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black)),
+                    const Text('祝你找日达成目标🎉'),
+                  ],
+                ),
+              ),
+              Align(
+                alignment: const Alignment(0.0, 0.8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('关闭页面'),
+                ),
+              ),
+            ],
+          )),
+    );
+  }
+
   void _showLottieDialog(BuildContext context, String timeCount) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          child: SizedBox(
-              width: 300,
-              height: 250,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                      child:
-                          Lottie.asset('assets/lottie/congratulations.json')),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text('让咱看看本次积累了多少时间'),
-                        Text(timeCount,
-                            style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black)),
-                        const Text('祝你找日达成目标🎉'),
-                      ],
-                    ),
-                  ),
-                  Align(
-                    alignment: const Alignment(0.0, 0.8),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('关闭页面'),
-                    ),
-                  ),
-                ],
-              )),
-        );
+        return buildDialog(timeCount);
       },
     );
   }

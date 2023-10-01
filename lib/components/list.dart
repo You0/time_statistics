@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shaniu/activity/time_count_page.dart';
 import 'package:shaniu/activity/timekeeping_page.dart';
 import 'package:shaniu/data/list_item.dart';
@@ -21,6 +22,10 @@ class TimeStatisticsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; // 获取屏幕宽度
+    if (items.isEmpty) {
+      return Center(child: Lottie.asset('assets/lottie/empty.json'));
+    }
+
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (context, index) {
