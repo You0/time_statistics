@@ -113,9 +113,18 @@ Future<BarChartData> getBarChartData(
           showingTooltipIndicators: [0],
           barsSpace: 10);
     }
+    print(startTime.millisecondsSinceEpoch);
+    print(endTime.millisecondsSinceEpoch);
+
+    int startTimeStamp =
+        DateTime(startTime.year, startTime.month, startTime.day, 0, 0, 0)
+            .millisecondsSinceEpoch;
+    int endTimeStamp =
+        DateTime(endTime.year, endTime.month, endTime.day, 23, 59, 59)
+            .millisecondsSinceEpoch;
     await DataBaseHelper()
-        .queryByTypeAndTimeSectionGroupByDate(title,
-            startTime.millisecondsSinceEpoch, endTime.millisecondsSinceEpoch)
+        .queryByTypeAndTimeSectionGroupByDate(
+            title, startTimeStamp, endTimeStamp)
         .then((value) => {
               for (var element in value)
                 {

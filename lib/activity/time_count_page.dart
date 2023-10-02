@@ -254,7 +254,7 @@ class _TimeCountPageState extends State<TimeCountPage> with RestorationMixin {
                   swapAnimationDuration: const Duration(milliseconds: 300),
                   swapAnimationCurve: Curves.linear),
             ),
-            const Padding(padding: EdgeInsets.only(top: 100)),
+            const Padding(padding: EdgeInsets.only(top: 50)),
             _buildDeleteButton()
           ],
         ),
